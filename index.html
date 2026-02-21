@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hati Meter - Ukur EQ & Love Language Kamu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['Outfit', 'sans-serif'],
+                        body: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        'love-pink': '#FF7597',
+                        'love-rose': '#FF4D6D',
+                        'love-purple': '#C9184A',
+                        'love-deep': '#800F2F',
+                        'soft-bg': '#FFF0F3',
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'bounce-subtle': 'bounceSubtle 2s infinite',
+                        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+                        'slide-up': 'slideUp 0.4s ease-out forwards',
+                        'scale-in': 'scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+                        'confetti': 'confetti 1s ease-out forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        bounceSubtle: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '50%': { transform: 'translateX(5px)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 20px rgba(255,77,109,0.3)' },
+                            '50%': { boxShadow: '0 0 40px rgba(255,77,109,0.6)' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(15px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        scaleIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.8)' },
+                            '100%': { opacity: '1', transform: 'scale(1)' },
+                        },
+                        confetti: {
+                            '0%': { opacity: '1', transform: 'translateY(0) rotate(0deg)' },
+                            '100%': { opacity: '0', transform: 'translateY(-100px) rotate(720deg)' },
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* ===== CRITICAL KEYFRAMES (must be here, not in Tailwind config) ===== */
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes bounceSubtle {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+        }
+
+        @keyframes pulseGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(255, 77, 109, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(255, 77, 109, 0.6);
+            }
+        }
+
+        @keyframes scaleIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes confetti {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) rotate(720deg);
+            }
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .animate-bounce-subtle {
+            animation: bounceSubtle 2s infinite;
+        }
+
+        .animate-pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.4s ease-out forwards;
+        }
+
+        .animate-scale-in {
+            animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* ===== LOVE LANG BAR GRADIENT COLORS (dynamic classes) ===== */
+        .bar-words {
+            background: linear-gradient(to right, #fb7185, #ec4899);
+        }
+
+        .bar-acts {
+            background: linear-gradient(to right, #60a5fa, #6366f1);
+        }
+
+        .bar-gifts {
+            background: linear-gradient(to right, #a78bfa, #8b5cf6);
+        }
+
+        .bar-quality {
+            background: linear-gradient(to right, #2dd4bf, #10b981);
+        }
+
+        .bar-touch {
+            background: linear-gradient(to right, #fb923c, #ef4444);
+        }
+
+        body {
+            background: radial-gradient(circle at top left, #ffafbd, #ffc3a0),
+                linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(193, 31, 105, 0.15);
+        }
+
+        .option-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .option-btn:not(:disabled):hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(255, 117, 151, 0.25);
+            border-color: #FF7597;
+        }
+
+        .option-btn:not(:disabled):active {
+            transform: scale(0.98);
+        }
+
+        .option-btn:disabled {
+            cursor: default;
+        }
+
+        .option-btn.selected-correct {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+
+        .option-btn.selected-correct .icon-circle {
+            background: #dcfce7 !important;
+        }
+
+        .option-btn.selected-wrong {
+            border-color: #fb7185;
+            background: #fff1f2;
+        }
+
+        .option-btn.selected-wrong .icon-circle {
+            background: #ffe4e6 !important;
+        }
+
+        .progress-fill {
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .screen {
+            display: none;
+            opacity: 0;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .menu-btn {
+            transition: all 0.3s ease;
+        }
+
+        .menu-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(193, 31, 105, 0.25);
+        }
+
+        .menu-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .eq-bar-fill {
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .love-lang-card {
+            transition: all 0.3s ease;
+        }
+
+        .love-lang-card:hover {
+            transform: translateY(-2px);
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 117, 151, 0.5);
+            border-radius: 10px;
+        }
+
+        .stagger-1 {
+            animation-delay: 0.1s;
+        }
+
+        .stagger-2 {
+            animation-delay: 0.2s;
+        }
+
+        .stagger-3 {
+            animation-delay: 0.3s;
+        }
+
+        .stagger-4 {
+            animation-delay: 0.4s;
+        }
+
+        .stagger-5 {
+            animation-delay: 0.5s;
+        }
+
+        /* Next button fix: use a dedicated class instead of conflicting hidden+flex */
+        #next-btn.btn-hidden {
+            display: none !important;
+        }
+
+        #next-btn {
+            display: flex;
+        }
+    </style>
+</head>
+
+<body class="font-body text-slate-800 antialiased p-4">
+
+    <div class="w-full max-w-lg glass-card rounded-[2.5rem] p-6 md:p-10 relative overflow-y-auto max-h-[95vh]">
+
+        <!-- ====== START SCREEN ====== -->
+        <div id="start-screen" class="screen active">
+            <div class="text-center">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-love-pink to-love-purple rounded-3xl flex items-center justify-center text-white shadow-xl mx-auto mb-6 animate-float">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                    </svg>
+                </div>
+                <h1
+                    class="font-display font-extrabold text-4xl bg-gradient-to-r from-love-purple via-love-rose to-love-pink bg-clip-text text-transparent mb-3">
+                    Hati Meter</h1>
+                <p class="text-slate-500 text-sm md:text-base mb-2">💕 Ukur Hati Kamu Lewat 10 Pertanyaan!</p>
+
+                <div class="bg-white/40 rounded-2xl p-4 mb-6 border border-white/60 text-left">
+                    <p class="text-sm text-slate-600 leading-relaxed">Kuis interaktif yang menganalisis <strong>Love
+                            Language</strong> (bahasa cinta) dan <strong>Emotional Quotient</strong> (kecerdasan
+                        emosional) kamu berdasarkan cara kamu merespons situasi sehari-hari seputar cinta, persahabatan,
+                        dan hubungan.</p>
+                </div>
+
+                <div class="mb-5">
+                    <button onclick="startQuiz(10)"
+                        class="menu-btn w-full py-5 bg-gradient-to-r from-love-pink via-love-rose to-love-purple text-white font-bold text-lg rounded-2xl shadow-lg flex items-center justify-center gap-3 animate-pulse-glow">
+                        <span class="text-2xl">🔮</span>
+                        <span>Mulai Main</span>
+                        <span class="text-2xl">→</span>
+                    </button>
+                </div>
+
+                <p class="text-[10px] text-slate-400 leading-relaxed">⚠️ Ini hanya kuis hiburan, bukan tes psikologi
+                    profesional — hasil tidak menggantikan konsultasi ahli.</p>
+            </div>
+        </div>
+
+        <!-- ====== QUIZ SCREEN ====== -->
+        <div id="quiz-screen" class="screen">
+            <!-- Header -->
+            <header class="flex justify-between items-center mb-6">
+                <div class="flex items-center gap-2">
+                    <div
+                        class="w-9 h-9 bg-gradient-to-br from-love-pink to-love-rose rounded-xl flex items-center justify-center text-white shadow-lg animate-float">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+                    </div>
+                    <h1
+                        class="font-display font-bold text-xl bg-gradient-to-r from-love-purple to-love-rose bg-clip-text text-transparent">
+                        Hati Meter</h1>
+                </div>
+                <div class="bg-white/50 px-3 py-1 rounded-full border border-love-pink/20">
+                    <span id="progress-label" class="text-xs font-semibold text-love-purple">1 / 5</span>
+                </div>
+            </header>
+
+            <!-- Progress Bar -->
+            <div class="w-full h-2 bg-white/50 rounded-full mb-6 overflow-hidden">
+                <div id="progress-bar"
+                    class="progress-fill h-full bg-gradient-to-r from-love-pink to-love-rose rounded-full"
+                    style="width: 0%"></div>
+            </div>
+
+            <!-- Question -->
+            <main>
+                <div id="question-container">
+                    <h2 id="question-text" class="text-lg md:text-xl font-bold leading-snug text-slate-800 mb-5"></h2>
+                    <div id="options-container" class="flex flex-col gap-3"></div>
+                </div>
+
+                <!-- Next Button -->
+                <div class="flex justify-end mt-6">
+                    <button id="next-btn"
+                        class="btn-hidden py-3 px-6 bg-slate-900 text-white font-bold rounded-2xl items-center justify-center gap-2 shadow-xl hover:bg-slate-800 transition-all active:scale-95 group">
+                        <span id="next-btn-text">Lanjut</span>
+                        <span class="group-hover:animate-bounce-subtle">→</span>
+                    </button>
+                </div>
+            </main>
+        </div>
+
+        <!-- ====== RESULTS SCREEN ====== -->
+        <div id="results-screen" class="screen">
+            <div class="text-center">
+                <div class="text-5xl mb-4" id="result-emoji">💖</div>
+                <h2
+                    class="font-display font-extrabold text-2xl md:text-3xl bg-gradient-to-r from-love-purple via-love-rose to-love-pink bg-clip-text text-transparent mb-2">
+                    Hasil Kamu!</h2>
+                <p class="text-slate-400 text-xs mb-6">Berdasarkan jawaban kamu, ini dia hasilnya~</p>
+
+                <!-- Love Language Result -->
+                <div
+                    class="bg-gradient-to-br from-love-pink/10 to-love-rose/10 rounded-2xl p-5 mb-4 border border-love-pink/20">
+                    <p class="text-xs font-semibold text-love-purple uppercase tracking-wide mb-2">💕 Love Language Kamu
+                    </p>
+                    <h3 id="love-lang-title" class="font-display font-bold text-xl text-slate-800 mb-1"></h3>
+                    <p id="love-lang-desc" class="text-sm text-slate-500 leading-relaxed"></p>
+                </div>
+
+                <!-- Love Language Breakdown -->
+                <div class="bg-white/50 rounded-2xl p-4 mb-4 border border-white/60">
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">📊 Breakdown Love
+                        Language</p>
+                    <div id="love-lang-bars" class="space-y-2"></div>
+                </div>
+
+                <!-- EQ Result -->
+                <div
+                    class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-5 mb-4 border border-amber-200/40">
+                    <p class="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-2">🧠 Level EQ Kamu</p>
+                    <h3 id="eq-level" class="font-display font-bold text-xl text-slate-800 mb-2"></h3>
+                    <div class="w-full h-3 bg-white/80 rounded-full overflow-hidden mb-2">
+                        <div id="eq-bar"
+                            class="eq-bar-fill h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
+                            style="width: 0%"></div>
+                    </div>
+                    <p id="eq-score-text" class="text-xs text-amber-600 mb-2"></p>
+                    <p id="eq-desc" class="text-sm text-slate-500 leading-relaxed mb-3"></p>
+
+                    <!-- EQ Dimension Breakdown -->
+                    <div id="eq-dimensions" class="space-y-1 mb-3"></div>
+
+                    <!-- What EQ Score Means -->
+                    <div class="bg-white/60 rounded-xl p-3 text-left">
+                        <p class="text-xs font-semibold text-amber-700 mb-1">📖 Apa arti skor EQ ini?</p>
+                        <p id="eq-meaning" class="text-xs text-slate-500 leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <!-- Insight -->
+                <div class="bg-white/40 rounded-2xl p-4 mb-4 border border-white/60">
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">✨ Insight Personal</p>
+                    <p id="insight-text" class="text-sm text-slate-600 leading-relaxed"></p>
+                </div>
+
+                <!-- EQ Disclaimer -->
+                <div class="bg-slate-50/80 rounded-2xl p-4 mb-6 border border-slate-200/40 text-left">
+                    <p class="text-[11px] text-slate-400 leading-relaxed">⚠️ <strong>Disclaimer:</strong> Skor EQ di
+                        kuis ini bersifat hiburan dan bukan hasil asesmen psikologi profesional. Skor ini <em>tidak</em>
+                        mengukur kecerdasan emosional kamu secara klinis, tidak bisa digunakan untuk diagnosis, dan
+                        tidak menggantikan evaluasi dari psikolog atau konselor berlisensi. Setiap orang unik — jangan
+                        jadikan skor ini sebagai penilaian diri yang absolut.</p>
+                </div>
+
+                <!-- Play Again -->
+                <button onclick="resetQuiz()"
+                    class="menu-btn w-full py-4 bg-gradient-to-r from-love-pink to-love-rose text-white font-bold rounded-2xl shadow-lg flex items-center justify-center gap-2">
+                    🔄 Main Lagi
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ================================================
+        // QUESTION POOL — 25 questions
+        // Each option maps to: loveLang + eqDimension
+        // Love Languages: words, acts, gifts, quality, touch
+        // EQ Dimensions: awareness, empathy, regulation, social, motivation
+        // ================================================
+        const allQuestions = [
+            {
+                q: "Gebetan kamu lagi bad mood berat. Kamu bakal ngapain, bestie?",
+                opts: [
+                    { text: "Kirim chat panjang penuh semangat dan kata-kata manis biar dia merasa dihargai 💬", emoji: "💬", love: "words", eq: "empathy" },
+                    { text: "Langsung bantuin urusan dia yang bikin stres, biar bebannya berkurang 🛠️", emoji: "🛠️", love: "acts", eq: "empathy" },
+                    { text: "Ajak dia jalan atau nongkrong berdua aja, dengarkan curhatnya sampai selesai 🎧", emoji: "🎧", love: "quality", eq: "empathy" },
+                    { text: "Peluk dia erat-erat tanpa bilang apa-apa, biar dia tahu kamu ada 🤗", emoji: "🤗", love: "touch", eq: "empathy" }
+                ]
+            },
+            {
+                q: "Hari anniversary, kamu paling excited kalau pasangan kamu...",
+                opts: [
+                    { text: "Nulis surat cinta yang super heartfelt bikin kamu nangis terharu 💌", emoji: "💌", love: "words", eq: "awareness" },
+                    { text: "Surprise masakin makanan favorit kamu dari nol, effortnya bikin meleleh 🍳", emoji: "🍳", love: "acts", eq: "awareness" },
+                    { text: "Kasih hadiah yang nunjukin dia beneran perhatiin kamu sehari-hari 🎁", emoji: "🎁", love: "gifts", eq: "awareness" },
+                    { text: "Seharian full quality time, no HP, cuma berdua ngobrol dan ketawa 🌅", emoji: "🌅", love: "quality", eq: "awareness" }
+                ]
+            },
+            {
+                q: "Kamu lagi berantem sama sahabat baik. Gimana cara kamu handle?",
+                opts: [
+                    { text: "Diem dulu, cooling down, baru nanti ngobrol baik-baik pas udah tenang ☕", emoji: "☕", love: "quality", eq: "regulation" },
+                    { text: "Langsung minta maaf dan bilang perasaan kamu jujur-jujuran 💬", emoji: "💬", love: "words", eq: "regulation" },
+                    { text: "Kasih dia space tapi kirimin makanan favorit dia sebagai peace offering 🎁", emoji: "🎁", love: "gifts", eq: "regulation" },
+                    { text: "Bantuin dia solve masalah yang jadi akar berantem, biar clear 🤝", emoji: "🤝", love: "acts", eq: "regulation" }
+                ]
+            },
+            {
+                q: "Kamu ngerasa paling dicintai ketika pasangan...",
+                opts: [
+                    { text: "Bilang 'aku bangga sama kamu' atau 'kamu luar biasa' — words hit different! 🥹", emoji: "🥹", love: "words", eq: "awareness" },
+                    { text: "Tanpa diminta, udah ngerjain hal-hal kecil yang bikin hidup kamu lebih mudah 💪", emoji: "💪", love: "acts", eq: "awareness" },
+                    { text: "Gandeng tangan kamu di tempat umum tanpa malu-malu 👫", emoji: "👫", love: "touch", eq: "awareness" },
+                    { text: "Quality time bareng tanpa gangguan, full attention ke kamu 🌙", emoji: "🌙", love: "quality", eq: "awareness" }
+                ]
+            },
+            {
+                q: "Bestie, temen kamu curhat soal hubungannya yang toxic. Kamu gimana?",
+                opts: [
+                    { text: "Dengerin sampai selesai tanpa judge, terus kasih validasi perasaan dia 💛", emoji: "💛", love: "quality", eq: "empathy" },
+                    { text: "Kasih advice yang jujur walau agak pedas, karena kamu sayang dia 💬", emoji: "💬", love: "words", eq: "social" },
+                    { text: "Ajak dia hangout buat distraksi, treat dia makan enak biar mood-nya naik 🍕", emoji: "🍕", love: "gifts", eq: "empathy" },
+                    { text: "Bantuin dia bikin plan konkret buat keluar dari situasi toxic itu 📋", emoji: "📋", love: "acts", eq: "social" }
+                ]
+            },
+            {
+                q: "Di-ghosting gebetan setelah 3 hari deep talk. What do you do?",
+                opts: [
+                    { text: "Ya udah sih, mungkin dia sibuk. Nanti juga kalau jodoh balik. Stay cool 😎", emoji: "😎", love: "quality", eq: "regulation" },
+                    { text: "Kirim satu chat terakhir yang mature, bilang kamu terbuka kalau dia mau lanjut 💬", emoji: "💬", love: "words", eq: "regulation" },
+                    { text: "Fokus ke self-improvement, gym atau belajar hal baru. Jadiin motivasi! 🔥", emoji: "🔥", love: "acts", eq: "motivation" },
+                    { text: "Cerita ke bestie buat proses perasaan, jangan ditimbun sendiri 🫂", emoji: "🫂", love: "touch", eq: "awareness" }
+                ]
+            },
+            {
+                q: "Pasangan kamu lupa anniversary kalian. Kamu ngerasa gimana?",
+                opts: [
+                    { text: "Agak sedih tapi langsung komunikasiin ke dia dengan calm, nggak passive aggressive 🗣️", emoji: "🗣️", love: "words", eq: "regulation" },
+                    { text: "Biarin aja, yang penting sehari-hari dia tetap perhatian dan ada buat kamu 💆", emoji: "💆", love: "acts", eq: "regulation" },
+                    { text: "Kecewa sih, tapi kamu surprise dia duluan aja biar dia sadar dan ngerasa bersalah dikit 🎁", emoji: "🎁", love: "gifts", eq: "social" },
+                    { text: "Ajak dia date spontan aja, yang penting bisa quality time bareng 🌃", emoji: "🌃", love: "quality", eq: "motivation" }
+                ]
+            },
+            {
+                q: "Cara kamu nunjukin sayang ke orang terdekat biasanya gimana sih?",
+                opts: [
+                    { text: "Sering bilang 'gue sayang lo' atau 'lo berarti banget buat gue' secara verbal ❤️", emoji: "❤️", love: "words", eq: "social" },
+                    { text: "Actions speak louder! Bantuin mereka tanpa diminta, dari hal kecil sampai besar 🦸", emoji: "🦸", love: "acts", eq: "social" },
+                    { text: "Kasih surprise kecil-kecilan, beli snack favorit mereka, atau kirim something 🎀", emoji: "🎀", love: "gifts", eq: "social" },
+                    { text: "Physical affection — peluk, rangkul, atau sekedar tepukan di bahu 🤗", emoji: "🤗", love: "touch", eq: "social" }
+                ]
+            },
+            {
+                q: "Kamu lagi PDKT, terus dia bilang 'kamu tuh beda dari yang lain.' Reaksi kamu?",
+                opts: [
+                    { text: "Seneng banget tapi tetap grounded, nggak langsung ge-er berlebihan 🧘", emoji: "🧘", love: "words", eq: "regulation" },
+                    { text: "Langsung bilang balik hal manis yang genuine dari hati 💕", emoji: "💕", love: "words", eq: "social" },
+                    { text: "Senyum-senyum sendiri semaleman sambil replay percakapannya 😊", emoji: "😊", love: "quality", eq: "awareness" },
+                    { text: "Jadi makin semangat improve diri biar worthy buat dia 💪", emoji: "💪", love: "acts", eq: "motivation" }
+                ]
+            },
+            {
+                q: "Kalau kamu lagi sedih, yang paling bikin kamu merasa baikan itu...",
+                opts: [
+                    { text: "Kata-kata penyemangat dari orang terdekat — words of comfort itu healing banget 🌸", emoji: "🌸", love: "words", eq: "awareness" },
+                    { text: "Ada yang bantuin urusan kamu biar beban berkurang tanpa perlu diminta 🤲", emoji: "🤲", love: "acts", eq: "awareness" },
+                    { text: "Dipeluk hangat atau ada yang ngelus kepala kamu 🫶", emoji: "🫶", love: "touch", eq: "awareness" },
+                    { text: "Diajak jalan-jalan atau sekadar duduk bareng dalam diam pun cukup 🌿", emoji: "🌿", love: "quality", eq: "awareness" }
+                ]
+            },
+            {
+                q: "Temen kamu dapet promosi kerja padahal kamu juga pengen banget posisi itu. Kamu...",
+                opts: [
+                    { text: "Congratulate dia dengan tulus dan jadiin motivasi buat improve skill kamu 🎯", emoji: "🎯", love: "words", eq: "motivation" },
+                    { text: "Akui perasaan iri kamu tapi nggak sampai nyakitin siapapun, proses sendiri dulu 🧠", emoji: "🧠", love: "quality", eq: "awareness" },
+                    { text: "Treat dia makan atau kasih small gift celebration, genuine happy buat dia 🎉", emoji: "🎉", love: "gifts", eq: "empathy" },
+                    { text: "Bantuin dia settle di posisi barunya, siapa tahu bisa belajar dari dia juga 🤝", emoji: "🤝", love: "acts", eq: "social" }
+                ]
+            },
+            {
+                q: "Long distance relationship. Kamu paling kangen kalau...",
+                opts: [
+                    { text: "Nggak bisa denger suaranya bilang 'aku kangen' atau 'aku sayang kamu' 📱", emoji: "📱", love: "words", eq: "awareness" },
+                    { text: "Nggak bisa dipeluk atau sekedar gandeng tangan dia 🫠", emoji: "🫠", love: "touch", eq: "awareness" },
+                    { text: "Nggak bisa hangout bareng, nonton, atau masak bareng kayak biasa 🎬", emoji: "🎬", love: "quality", eq: "awareness" },
+                    { text: "Nggak bisa surprise-in dia dengan hal-hal kecil yang bikin senyum 🎁", emoji: "🎁", love: "gifts", eq: "awareness" }
+                ]
+            },
+            {
+                q: "Kamu lagi meeting penting terus pasangan kamu chat minta perhatian. Gimana?",
+                opts: [
+                    { text: "Quick reply: 'sayang lagi meeting, nanti aku full attention ke kamu ya ❤️' 💬", emoji: "💬", love: "words", eq: "regulation" },
+                    { text: "Nggak bales dulu tapi setelah meeting langsung call dan kasih full time 📞", emoji: "📞", love: "quality", eq: "regulation" },
+                    { text: "During break, order makanan surprise ke rumah dia biar dia seneng 🍔", emoji: "🍔", love: "gifts", eq: "social" },
+                    { text: "Setelah meeting, langsung handle semua yang dia butuhin tanpa dia minta lagi 💼", emoji: "💼", love: "acts", eq: "regulation" }
+                ]
+            },
+            {
+                q: "Sahabat kamu nangis karena putus. Yang pertama kamu lakuin?",
+                opts: [
+                    { text: "Peluk dia, biarkan nangis di pundak kamu selama yang dia butuhkan 🤗", emoji: "🤗", love: "touch", eq: "empathy" },
+                    { text: "Bilang semua hal baik tentang dia, remind dia betapa amazingnya dia 🌟", emoji: "🌟", love: "words", eq: "empathy" },
+                    { text: "Ajak dia ke tempat favoritnya, beliin comfort food, treat dia seharian 🍦", emoji: "🍦", love: "gifts", eq: "empathy" },
+                    { text: "Diem aja, duduk di sebelahnya, temani tanpa banyak bicara — just be there 🌙", emoji: "🌙", love: "quality", eq: "empathy" }
+                ]
+            },
+            {
+                q: "Kamu dan pasangan beda pendapat soal rencana liburan. How do you handle it?",
+                opts: [
+                    { text: "Diskusi terbuka, dengerin maunya dia, terus cari jalan tengah yang bikin dua-duanya happy 🗨️", emoji: "🗨️", love: "words", eq: "social" },
+                    { text: "Research opsi-opsi kompromi terus presentasiin ke dia lengkap dengan pros & cons 📊", emoji: "📊", love: "acts", eq: "social" },
+                    { text: "Biar dia yang pilih aja, asalkan bisa quality time bareng kamu udah happy ☀️", emoji: "☀️", love: "quality", eq: "regulation" },
+                    { text: "Surprise dia dengan itinerary gabungan — setengah maunya dia, setengah maunya kamu 🎁", emoji: "🎁", love: "gifts", eq: "motivation" }
+                ]
+            },
+            {
+                q: "Kamu dikritik keras sama bos/dosen di depan banyak orang. Reaksi kamu?",
+                opts: [
+                    { text: "Tarik nafas, terima dengan grace, nanti refleksi sendiri apa yang bisa diperbaiki 🧘", emoji: "🧘", love: "quality", eq: "regulation" },
+                    { text: "Setelah tenang, approach dia privately untuk klarifikasi dan minta konstruktif feedback 🗣️", emoji: "🗣️", love: "words", eq: "social" },
+                    { text: "Jadiin bahan bakar buat prove mereka salah — watch me glow up! 🔥", emoji: "🔥", love: "acts", eq: "motivation" },
+                    { text: "Cerita ke orang terdekat buat proses emosi, minta pelukan warm 🫂", emoji: "🫂", love: "touch", eq: "awareness" }
+                ]
+            },
+            {
+                q: "Kalau ngasih hadiah ke orang tersayang, style kamu biasanya...",
+                opts: [
+                    { text: "Handwritten letter yang panjang dan penuh pesan dari hati — words are everything 📝", emoji: "📝", love: "words", eq: "social" },
+                    { text: "Hadiah yang specifically match sama hal yang pernah dia mention casually 🎯", emoji: "🎯", love: "gifts", eq: "empathy" },
+                    { text: "DIY something atau masakin dia sesuatu — effort is my love language 🎨", emoji: "🎨", love: "acts", eq: "motivation" },
+                    { text: "Plan quality date experience bareng daripada kasih barang 🎢", emoji: "🎢", love: "quality", eq: "social" }
+                ]
+            },
+            {
+                q: "Di hubungan, red flag terbesar buat kamu itu apa sih?",
+                opts: [
+                    { text: "Nggak pernah ngomong perasaannya, semuanya harus kamu tebak-tebak sendiri 🤐", emoji: "🤐", love: "words", eq: "awareness" },
+                    { text: "Cuma bisa ngomong doang tapi nggak pernah walk the talk — no action! 😤", emoji: "😤", love: "acts", eq: "awareness" },
+                    { text: "Selalu sibuk dan nggak pernah punya waktu berdua yang berkualitas ⏰", emoji: "⏰", love: "quality", eq: "awareness" },
+                    { text: "Nggak affectionate sama sekali, dingin banget, nggak pernah sentuh kamu 🥶", emoji: "🥶", love: "touch", eq: "awareness" }
+                ]
+            },
+            {
+                q: "Kamu achieve something big! Siapa yang pertama kamu kabarin dan gimana caranya?",
+                opts: [
+                    { text: "Call orang terdekat dan cerita excited banget, butuh verbal celebration 🎙️", emoji: "🎙️", love: "words", eq: "social" },
+                    { text: "Ajak bestie/pasangan celebrasi bareng, quality moment bikin achievement lebih berarti 🥂", emoji: "🥂", love: "quality", eq: "social" },
+                    { text: "Treat diri sendiri dan orang tersayang — beliin sesuatu spesial 🛍️", emoji: "🛍️", love: "gifts", eq: "motivation" },
+                    { text: "Lari dan peluk orang tersayang sambil teriak 'I DID IT!' 🏃‍♂️", emoji: "🏃‍♂️", love: "touch", eq: "social" }
+                ]
+            },
+            {
+                q: "Weekend ideal kamu sama pasangan itu kayak gimana sih?",
+                opts: [
+                    { text: "Rebahan bareng sambil deep talk seharian, no distraction 🛋️", emoji: "🛋️", love: "quality", eq: "awareness" },
+                    { text: "Masak bareng, beresin rumah bareng — doing things together itu intimate 🏠", emoji: "🏠", love: "acts", eq: "awareness" },
+                    { text: "Cuddling marathon nonton series favorit, skin contact is a must 🥰", emoji: "🥰", love: "touch", eq: "awareness" },
+                    { text: "Saling tukar playlist, baca puisi, atau share quotes favorit — intellectual intimacy 📖", emoji: "📖", love: "words", eq: "awareness" }
+                ]
+            },
+            {
+                q: "Kamu ngerasa insecure tentang hubungan kamu. Yang kamu lakuin?",
+                opts: [
+                    { text: "Refleksi diri dulu — apakah ini based on fakta atau cuma overthinking 🪞", emoji: "🪞", love: "quality", eq: "awareness" },
+                    { text: "Ngomong jujur ke pasangan tanpa nyerang, pure vulnerable conversation 💬", emoji: "💬", love: "words", eq: "regulation" },
+                    { text: "Channel energi ke hal produktif, gym, belajar, atau hobi untuk boost confidence 💪", emoji: "💪", love: "acts", eq: "motivation" },
+                    { text: "Minta reassurance fisik — pelukan, genggaman tangan, kehadiran dia beside you 🫶", emoji: "🫶", love: "touch", eq: "awareness" }
+                ]
+            },
+            {
+                q: "Kalau harus pilih satu, momen paling bikin kamu bonding sama seseorang?",
+                opts: [
+                    { text: "Deep conversation jam 2 pagi yang bikin kamu ngerasa truly understood 🌌", emoji: "🌌", love: "quality", eq: "empathy" },
+                    { text: "Dia bilang sesuatu yang nunjukin dia notice detail kecil tentang kamu 👀", emoji: "👀", love: "words", eq: "empathy" },
+                    { text: "Bantuin kamu di saat susah tanpa kamu minta, reliable banget 🦸‍♂️", emoji: "🦸‍♂️", love: "acts", eq: "empathy" },
+                    { text: "Spontaneous hug atau pegangan tangan yang bikin dunia berasa berhenti ⏸️", emoji: "⏸️", love: "touch", eq: "empathy" }
+                ]
+            },
+            {
+                q: "Pasangan kamu berubah jadi lebih dingin belakangan. Kamu gimana?",
+                opts: [
+                    { text: "Tanya langsung dengan gentle, 'aku ngerasa ada yang beda, kamu okay nggak?' 🗣️", emoji: "🗣️", love: "words", eq: "regulation" },
+                    { text: "Observasi dulu tanpa buruk sangka, mungkin dia lagi going through something 🔍", emoji: "🔍", love: "quality", eq: "empathy" },
+                    { text: "Lebih extra perhatian lewat tindakan — masakin dia, bantuin kerjaan dia 🍲", emoji: "🍲", love: "acts", eq: "empathy" },
+                    { text: "Inisiasi physical comfort, kadang pelukan bicara lebih banyak dari kata-kata 💞", emoji: "💞", love: "touch", eq: "social" }
+                ]
+            },
+            {
+                q: "Menurut kamu, apa sih tanda orang yang emotionally mature?",
+                opts: [
+                    { text: "Bisa mengkomunikasikan perasaannya secara jelas tanpa nyakitin orang lain 🎯", emoji: "🎯", love: "words", eq: "regulation" },
+                    { text: "Konsisten antara omongan dan tindakan — reliable dan bisa diandalkan 🏔️", emoji: "🏔️", love: "acts", eq: "awareness" },
+                    { text: "Mau kasih waktu dan perhatian penuh saat orang lain butuh tanpa expect balik 💎", emoji: "💎", love: "quality", eq: "empathy" },
+                    { text: "Tahu kapan harus kasih space dan kapan harus ada di samping orang 🌳", emoji: "🌳", love: "touch", eq: "regulation" }
+                ]
+            },
+            {
+                q: "Kamu lagi sendiri di kota baru, nggak kenal siapa-siapa. Langkah pertama kamu?",
+                opts: [
+                    { text: "Join komunitas atau class yang kamu suka buat ketemu orang baru 🎭", emoji: "🎭", love: "quality", eq: "social" },
+                    { text: "Chat teman online, curhat perasaan, minta support verbal mereka 📱", emoji: "📱", love: "words", eq: "social" },
+                    { text: "Volunteer atau bantu orang sekitar — connecting through giving 🤝", emoji: "🤝", love: "acts", eq: "motivation" },
+                    { text: "Explore tempat-tempat baru, treat yourself ke cafe keren, self-date! 🧁", emoji: "🧁", love: "gifts", eq: "motivation" }
+                ]
+            }
+        ];
+
+        // ================================================
+        // LOVE LANGUAGE & EQ DATA
+        // ================================================
+        const loveLangInfo = {
+            words: {
+                name: "Words of Affirmation",
+                emoji: "💬",
+                desc: "Kamu merasa paling dicintai lewat kata-kata! Pujian tulus, pesan manis, dan verbal encouragement itu bikin hati kamu meleleh. Kamu juga suka mengekspresikan sayang lewat words yang heartfelt. Untuk kamu, 'I love you' itu bukan cuma 3 kata — itu segalanya!",
+                color: "from-rose-400 to-pink-500"
+            },
+            acts: {
+                name: "Acts of Service",
+                emoji: "🛠️",
+                desc: "Actions speak louder than words buat kamu! Kamu merasa paling dihargai ketika seseorang menunjukkan cinta lewat tindakan nyata — bantuin tanpa diminta, masakin makanan, atau handle urusan kamu. Kamu juga menunjukkan sayang dengan cara yang sama: help first, talk later!",
+                color: "from-blue-400 to-indigo-500"
+            },
+            gifts: {
+                name: "Receiving Gifts",
+                emoji: "🎁",
+                desc: "Bukan soal materialnya, tapi thoughtfulness-nya! Kamu menghargai ketika seseorang meluangkan waktu buat milih atau bikin sesuatu spesial buat kamu. Gift buat kamu itu simbol dari 'aku mikirin kamu.' Kamu juga senang surprise orang tersayang dengan hadiah meaningful!",
+                color: "from-purple-400 to-violet-500"
+            },
+            quality: {
+                name: "Quality Time",
+                emoji: "🌙",
+                desc: "Undivided attention is everything! Kamu merasa paling dicintai ketika seseorang kasih waktu dan perhatian penuh ke kamu — no phone, no distraction, just us. Deep talk, nongkrong berdua, atau sekadar diam bareng itu lebih berarti dari apapun buat kamu.",
+                color: "from-teal-400 to-emerald-500"
+            },
+            touch: {
+                name: "Physical Touch",
+                emoji: "🤗",
+                desc: "Pelukan hangat, genggaman tangan, atau rangkulan — itu bahasa cinta kamu! Physical presence dan sentuhan itu bikin kamu merasa aman dan dicintai. Buat kamu, kadang satu pelukan bisa bilang lebih banyak dari seribu kata. Warmth is your superpower!",
+                color: "from-orange-400 to-red-500"
+            }
+        };
+
+        const eqLevels = [
+            { min: 0, max: 30, label: "Pemula 🌱", desc: "Kamu baru mulai journey untuk mengenal emosi kamu sendiri. Nggak apa-apa, semua orang punya pace masing-masing! Tips: mulai journaling perasaan kamu setiap hari dan practice active listening ya!" },
+            { min: 31, max: 55, label: "Berkembang 🌿", desc: "Kamu udah cukup aware sama emosi kamu dan mulai bisa manage perasaan di situasi tricky. Keep going! Tips: coba latih empathy dengan lebih sering nanya 'bagaimana perasaan orang ini?' sebelum react." },
+            { min: 56, max: 80, label: "Tinggi 🌟", desc: "Wow, EQ kamu udah di atas rata-rata! Kamu pandai membaca situasi, empati tinggi, dan bisa regulate emosi dengan baik. Orang-orang pasti nyaman di sekitar kamu. Keep being amazing, bestie!" },
+            { min: 81, max: 100, label: "Sangat Tinggi ✨", desc: "Bestie, EQ kamu literally off the charts! Kamu punya kemampuan luar biasa dalam memahami diri sendiri dan orang lain. Emotional intelligence kamu adalah superpower — kamu bisa jadi great leader dan partner!" }
+        ];
+
+        const personalInsights = {
+            words_high: "Kombinasi Words of Affirmation + EQ tinggi bikin kamu jago banget memotivasi orang lewat kata-kata. Kamu itu tipe yang bisa nge-heal orang cuma dari omongan — literally therapist friend! Gunakan kekuatan ini untuk spread positivity ya 💕",
+            words_low: "Kamu suka komunikasi verbal tapi kadang masih belajar buat ngembangin cara penyampaian yang lebih thoughtful. Tips: sebelum ngomong, coba tarik nafas dan tanya 'apakah ini perlu disampaikan sekarang dan dengan cara ini?' 🌸",
+            acts_high: "Kamu tipe yang show don't tell DAN punya emotional depth yang luar biasa. Kombinasi ini bikin kamu jadi partner yang super reliable dan understanding. Orang-orang beruntung banget punya kamu di hidup mereka! 💪",
+            acts_low: "Kamu suka nunjukin cinta lewat tindakan — that's beautiful! Tapi jangan lupa juga buat verbally express perasaan kamu ya. Kadang orang butuh dengar 'aku sayang kamu' selain hanya melihat actionnya 🌻",
+            gifts_high: "Kamu punya mata yang detail dan hati yang generous! Gift-giving kamu selalu thoughtful karena EQ tinggi kamu bikin kamu bisa 'baca' apa yang orang butuhkan. Kamu itu tipe yang kasih kado dan orangnya nangis terharu! 🎀",
+            gifts_low: "Kamu suka nunjukin appreciation lewat gifts dan gestures — so sweet! Challenge-nya: coba juga invest di emotional connection yang lebih dalam, karena kadang presence itu lebih berharga dari presents! 🌺",
+            quality_high: "Quality Time + high EQ? Kamu adalah definisi dari 'best listener EVER.' Kamu nggak cuma hadir secara fisik tapi juga secara emosional. Orang ngerasa truly seen dan heard ketika bareng kamu. That's a rare gift! 🌅",
+            quality_low: "Kamu menghargai waktu berdua dan kehadiran — itu fondasi hubungan yang kuat. Tips untuk grow: latih diri untuk lebih present dan mindful saat quality time, put the phone away dan beneran listen 🧘",
+            touch_high: "Physical Touch + high EQ = you give THE BEST hugs! Kamu intuitif banget dalam reading body language dan tahu kapan seseorang butuh comfort. Kehangatan kamu itu healing buat orang-orang terdekat kamu 🫶",
+            touch_low: "Kamu ekspresif lewat physical affection — that's lovely! Tips: belajar juga buat ngenali boundaries orang lain dan komunikasikan kebutuhan kamu secara verbal, biar nggak ada miscommunication 💜"
+        };
+
+        // ================================================
+        // GAME STATE
+        // ================================================
+        let totalQuestions = 10;
+        let currentIndex = 0;
+        let selectedQuestions = [];
+        let answers = []; // { love, eq }
+        let usedIndexes = []; // track used question indexes across plays
+
+        // ================================================
+        // FISHER-YATES SHUFFLE (unbiased)
+        // ================================================
+        function fisherYatesShuffle(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        // ================================================
+        // SCREEN MANAGEMENT
+        // ================================================
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => {
+                s.classList.remove('active');
+            });
+            setTimeout(() => {
+                document.getElementById(id).classList.add('active');
+            }, 50);
+        }
+
+        // ================================================
+        // START QUIZ
+        // ================================================
+        function startQuiz(n) {
+            totalQuestions = n;
+            currentIndex = 0;
+            answers = [];
+
+            // Get available (unused) question indexes
+            const allIndexes = allQuestions.map((_, i) => i);
+            let availableIndexes = allIndexes.filter(i => !usedIndexes.includes(i));
+
+            // If not enough unused questions, reset the tracker
+            if (availableIndexes.length < n) {
+                usedIndexes = [];
+                availableIndexes = [...allIndexes];
+            }
+
+            // Shuffle available indexes and pick n
+            const shuffled = fisherYatesShuffle(availableIndexes);
+            const pickedIndexes = shuffled.slice(0, n);
+
+            // Mark as used
+            usedIndexes.push(...pickedIndexes);
+
+            // Build selected questions array
+            selectedQuestions = pickedIndexes.map(i => allQuestions[i]);
+
+            showScreen('quiz-screen');
+            loadQuestion();
+        }
+
+        // ================================================
+        // LOAD QUESTION
+        // ================================================
+        function loadQuestion() {
+            const q = selectedQuestions[currentIndex];
+            const questionText = document.getElementById('question-text');
+            const optionsContainer = document.getElementById('options-container');
+            const nextBtn = document.getElementById('next-btn');
+            const nextBtnText = document.getElementById('next-btn-text');
+
+            // Update progress
+            document.getElementById('progress-label').textContent = `${currentIndex + 1} / ${totalQuestions}`;
+            document.getElementById('progress-bar').style.width = `${((currentIndex) / totalQuestions) * 100}%`;
+
+            // Update next button text
+            nextBtnText.textContent = currentIndex === totalQuestions - 1 ? 'Lihat Hasil! 🎉' : 'Pertanyaan Berikutnya';
+            nextBtn.classList.add('btn-hidden');
+
+            // Set question
+            questionText.textContent = q.q;
+            questionText.style.opacity = '0';
+            questionText.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                questionText.style.transition = 'all 0.4s ease';
+                questionText.style.opacity = '1';
+                questionText.style.transform = 'translateY(0)';
+            }, 50);
+
+            // Build options
+            optionsContainer.innerHTML = '';
+            q.opts.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = `option-btn w-full p-4 rounded-2xl bg-white border-2 border-slate-100 text-left flex items-center gap-4 group opacity-0`;
+                btn.style.animation = `slideUp 0.4s ease-out ${0.1 + i * 0.08}s forwards`;
+                btn.innerHTML = `
+                <span class="icon-circle flex-shrink-0 w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-xl group-hover:bg-love-pink/10 transition-colors">${opt.emoji}</span>
+                <span class="text-sm font-medium text-slate-600">${opt.text}</span>
+            `;
+                btn.onclick = () => handleAnswer(i, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        // ================================================
+        // HANDLE ANSWER (changeable — click another option to switch)
+        // ================================================
+        let currentSelectedIndex = -1;
+
+        function handleAnswer(index, selectedBtn) {
+            const q = selectedQuestions[currentIndex];
+            const opt = q.opts[index];
+
+            // If same option clicked again, do nothing
+            if (currentSelectedIndex === index) return;
+
+            // Remove previous answer if changing selection
+            if (currentSelectedIndex >= 0) {
+                answers.pop();
+            }
+
+            // Record new answer
+            currentSelectedIndex = index;
+            answers.push({ love: opt.love, eq: opt.eq });
+
+            // Update visual state — highlight selected, dim others, but keep all clickable
+            const buttons = document.querySelectorAll('#options-container .option-btn');
+            buttons.forEach((btn, i) => {
+                btn.classList.remove('selected-correct');
+                btn.classList.add('border-slate-100');
+                if (i === index) {
+                    btn.classList.add('selected-correct');
+                    btn.classList.remove('border-slate-100');
+                    btn.style.opacity = '1';
+                } else {
+                    btn.style.opacity = '0.5';
+                }
+            });
+
+            // Show next button
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.classList.remove('btn-hidden');
+
+            // Update progress bar to current completion
+            document.getElementById('progress-bar').style.width = `${((currentIndex + 1) / totalQuestions) * 100}%`;
+        }
+
+        // ================================================
+        // NEXT BUTTON
+        // ================================================
+        document.getElementById('next-btn').onclick = () => {
+            currentSelectedIndex = -1; // reset selection tracker
+            currentIndex++;
+            if (currentIndex >= totalQuestions) {
+                showResults();
+            } else {
+                loadQuestion();
+            }
+        };
+
+        // ================================================
+        // CALCULATE & SHOW RESULTS
+        // ================================================
+        function showResults() {
+            // Tally love languages
+            const loveCounts = { words: 0, acts: 0, gifts: 0, quality: 0, touch: 0 };
+            const eqCounts = { awareness: 0, empathy: 0, regulation: 0, social: 0, motivation: 0 };
+
+            answers.forEach(a => {
+                loveCounts[a.love]++;
+                eqCounts[a.eq]++;
+            });
+
+            // Find dominant love language
+            const dominantLove = Object.entries(loveCounts).sort((a, b) => b[1] - a[1])[0][0];
+            const info = loveLangInfo[dominantLove];
+
+            // Calculate EQ score (weighted)
+            const eqWeights = { awareness: 20, empathy: 25, regulation: 25, social: 15, motivation: 15 };
+            let eqScore = 0;
+            const totalAnswers = answers.length;
+            Object.entries(eqCounts).forEach(([dim, count]) => {
+                eqScore += (count / totalAnswers) * eqWeights[dim];
+            });
+            // Normalize to 0-100 scale
+            eqScore = Math.min(100, Math.round(eqScore * (100 / 25) * (totalAnswers >= 10 ? 1 : 0.9)));
+            // Add slight randomness so it feels less formulaic
+            eqScore = Math.min(100, Math.max(15, eqScore + Math.floor(Math.random() * 15) - 3));
+
+            // Get EQ level
+            const eqLevel = eqLevels.find(l => eqScore >= l.min && eqScore <= l.max);
+
+            // Show results screen
+            showScreen('results-screen');
+
+            // Fill in results
+            document.getElementById('result-emoji').textContent = info.emoji;
+            document.getElementById('love-lang-title').textContent = info.name;
+            document.getElementById('love-lang-desc').textContent = info.desc;
+
+            document.getElementById('eq-level').textContent = eqLevel.label;
+            document.getElementById('eq-score-text').textContent = `Skor: ${eqScore}/100`;
+            document.getElementById('eq-desc').textContent = eqLevel.desc;
+
+            // EQ bar animation
+            setTimeout(() => {
+                document.getElementById('eq-bar').style.width = `${eqScore}%`;
+            }, 300);
+
+            // Love language bars — TOP 3 ONLY
+            const barsContainer = document.getElementById('love-lang-bars');
+            barsContainer.innerHTML = '';
+            const sortedLangs = Object.entries(loveCounts).sort((a, b) => b[1] - a[1]);
+            const top3Langs = sortedLangs.slice(0, 3);
+
+            top3Langs.forEach(([key, count], i) => {
+                const langInfo = loveLangInfo[key];
+                const pct = Math.round((count / totalAnswers) * 100);
+                const bar = document.createElement('div');
+                bar.className = 'opacity-0';
+                bar.style.animation = `fadeInUp 0.4s ease-out ${0.2 + i * 0.1}s forwards`;
+                bar.innerHTML = `
+                <div class="flex justify-between text-xs mb-1">
+                    <span class="font-medium text-slate-600">${langInfo.emoji} ${langInfo.name}</span>
+                    <span class="font-semibold text-slate-500">${pct}%</span>
+                </div>
+                <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full rounded-full bar-${key} eq-bar-fill" style="width: 0%"></div>
+                </div>
+            `;
+                barsContainer.appendChild(bar);
+                setTimeout(() => {
+                    bar.querySelector('.eq-bar-fill').style.width = `${pct}%`;
+                }, 500 + i * 150);
+            });
+
+            // EQ Dimension Breakdown
+            const eqDimNames = {
+                awareness: { name: 'Self-Awareness', emoji: '🪞' },
+                empathy: { name: 'Empathy', emoji: '💛' },
+                regulation: { name: 'Self-Regulation', emoji: '🧘' },
+                social: { name: 'Social Skills', emoji: '🤝' },
+                motivation: { name: 'Motivation', emoji: '🔥' }
+            };
+            const eqDimsContainer = document.getElementById('eq-dimensions');
+            eqDimsContainer.innerHTML = '';
+            const sortedEq = Object.entries(eqCounts).sort((a, b) => b[1] - a[1]);
+            sortedEq.forEach(([dim, count]) => {
+                const dimInfo = eqDimNames[dim];
+                const pct = Math.round((count / totalAnswers) * 100);
+                const el = document.createElement('div');
+                el.className = 'flex items-center gap-2 text-xs';
+                el.innerHTML = `
+                    <span class="w-16 text-right text-slate-500">${dimInfo.emoji} ${pct}%</span>
+                    <div class="flex-1 h-1.5 bg-white/80 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full bg-gradient-to-r from-amber-300 to-orange-400 eq-bar-fill" style="width: 0%"></div>
+                    </div>
+                    <span class="w-28 text-slate-400 truncate">${dimInfo.name}</span>
+                `;
+                eqDimsContainer.appendChild(el);
+                setTimeout(() => {
+                    el.querySelector('.eq-bar-fill').style.width = `${pct}%`;
+                }, 600);
+            });
+
+            // EQ Meaning text
+            let eqMeaning = '';
+            if (eqScore <= 30) {
+                eqMeaning = 'Skor ini menunjukkan kamu masih dalam tahap awal mengenali pola emosi diri sendiri. Ini bukan berarti kamu "kurang" — justru ini starting point yang bagus! EQ bisa dilatih lewat refleksi, journaling, dan active listening. Setiap orang punya titik start berbeda.';
+            } else if (eqScore <= 55) {
+                eqMeaning = 'Kamu sudah punya fondasi emotional awareness yang cukup baik. Kamu bisa mengenali emosi dasar dan mulai belajar merespons dengan lebih bijak. Untuk berkembang, coba latih empati aktif — tanya pada diri sendiri "apa yang dirasakan orang lain?" sebelum bereaksi.';
+            } else if (eqScore <= 80) {
+                eqMeaning = 'Skor ini menunjukkan kemampuan emosional yang matang. Kamu cenderung bisa membaca situasi sosial, berempati tinggi, dan mengatur reaksi emosi dengan baik. Orang-orang di sekitarmu kemungkinan merasa nyaman dan dimengerti saat berinteraksi denganmu.';
+            } else {
+                eqMeaning = 'Skor sangat tinggi ini mencerminkan kecerdasan emosional yang exceptional. Kamu sangat peka terhadap perasaan diri sendiri maupun orang lain, jago navigate situasi emosional yang kompleks, dan punya kemampuan leadership emosional. Ini adalah kekuatan besar!';
+            }
+            document.getElementById('eq-meaning').textContent = eqMeaning;
+
+            // Personal insight
+            const isHighEQ = eqScore >= 56;
+            const insightKey = `${dominantLove}_${isHighEQ ? 'high' : 'low'}`;
+            document.getElementById('insight-text').textContent = personalInsights[insightKey] || personalInsights[`${dominantLove}_high`];
+        }
+
+        // ================================================
+        // RESET
+        // ================================================
+        function resetQuiz() {
+            currentIndex = 0;
+            answers = [];
+            document.getElementById('eq-bar').style.width = '0%';
+            showScreen('start-screen');
+        }
+    </script>
+</body>
+
+</html>
