@@ -980,21 +980,50 @@
                 eqCounts[a.eq]++;
             });
 
-            // Find dominant love language
-            const dominantLove = Object.entries(loveCounts).sort((a, b) => b[1] - a[1])[0][0];
+            const totalAnswers = answers.length;
+
+            // ---- IMPROVED LOVE LANGUAGE DETECTION ----
+            // Sort with tie-breaking: if counts equal, prefer the one chosen more recently
+            const sortedLoveEntries = Object.entries(loveCounts).sort((a, b) => {
+                if (b[1] !== a[1]) return b[1] - a[1];
+                const aLast = answers.map(ans => ans.love).lastIndexOf(a[0]);
+                const bLast = answers.map(ans => ans.love).lastIndexOf(b[0]);
+                return bLast - aLast;
+            });
+            const dominantLove = sortedLoveEntries[0][0];
             const info = loveLangInfo[dominantLove];
 
-            // Calculate EQ score (weighted)
-            const eqWeights = { awareness: 20, empathy: 25, regulation: 25, social: 15, motivation: 15 };
-            let eqScore = 0;
-            const totalAnswers = answers.length;
+            // ---- IMPROVED EQ SCORE CALCULATION ----
+            // Three-component model: Strength + Diversity + Balance (no random noise)
+            const eqDimWeights = { awareness: 0.20, empathy: 0.25, regulation: 0.25, social: 0.15, motivation: 0.15 };
+
+            // Component 1 — Dimension Strength (35%)
+            // Measures how much of your answers align with high-importance EQ dimensions
+            let strengthSum = 0;
             Object.entries(eqCounts).forEach(([dim, count]) => {
-                eqScore += (count / totalAnswers) * eqWeights[dim];
+                strengthSum += (count / totalAnswers) * eqDimWeights[dim];
             });
-            // Normalize to 0-100 scale
-            eqScore = Math.min(100, Math.round(eqScore * (100 / 25) * (totalAnswers >= 10 ? 1 : 0.9)));
-            // Add slight randomness so it feels less formulaic
-            eqScore = Math.min(100, Math.max(15, eqScore + Math.floor(Math.random() * 15) - 3));
+            // strengthSum ∈ [0.15, 0.25], normalize to [30, 100]
+            const strengthScore = 30 + ((strengthSum - 0.15) / 0.10) * 70;
+
+            // Component 2 — Diversity (35%)
+            // More diverse EQ dimensions = broader emotional intelligence
+            const activeDims = Object.values(eqCounts).filter(c => c > 0).length;
+            const diversityScore = (activeDims / 5) * 100;
+
+            // Component 3 — Balance (30%)
+            // Evenly distributed dimensions = well-rounded EQ
+            const expected = totalAnswers / 5;
+            let variance = 0;
+            Object.values(eqCounts).forEach(count => {
+                variance += Math.pow(count - expected, 2);
+            });
+            const maxVariance = Math.pow(totalAnswers - expected, 2) + 4 * Math.pow(expected, 2);
+            const balanceScore = (1 - variance / maxVariance) * 100;
+
+            // Final EQ score — weighted combination
+            let eqScore = Math.round(strengthScore * 0.35 + diversityScore * 0.35 + balanceScore * 0.30);
+            eqScore = Math.min(100, Math.max(10, eqScore));
 
             // Get EQ level
             const eqLevel = eqLevels.find(l => eqScore >= l.min && eqScore <= l.max);
@@ -1016,15 +1045,16 @@
                 document.getElementById('eq-bar').style.width = `${eqScore}%`;
             }, 300);
 
-            // Love language bars — TOP 3 ONLY
+            // Love language bars — TOP 3 ONLY (with Laplace smoothing)
             const barsContainer = document.getElementById('love-lang-bars');
             barsContainer.innerHTML = '';
-            const sortedLangs = Object.entries(loveCounts).sort((a, b) => b[1] - a[1]);
-            const top3Langs = sortedLangs.slice(0, 3);
+            const smoothing = 0.5; // Laplace smoothing for small-sample accuracy
+            const totalSmoothed = totalAnswers + 5 * smoothing;
+            const top3Langs = sortedLoveEntries.slice(0, 3);
 
             top3Langs.forEach(([key, count], i) => {
                 const langInfo = loveLangInfo[key];
-                const pct = Math.round((count / totalAnswers) * 100);
+                const pct = Math.round(((count + smoothing) / totalSmoothed) * 100);
                 const bar = document.createElement('div');
                 bar.className = 'opacity-0';
                 bar.style.animation = `fadeInUp 0.4s ease-out ${0.2 + i * 0.1}s forwards`;
@@ -1053,8 +1083,10 @@
             };
             const eqDimsContainer = document.getElementById('eq-dimensions');
             eqDimsContainer.innerHTML = '';
+            // Show TOP 3 EQ dimensions only
             const sortedEq = Object.entries(eqCounts).sort((a, b) => b[1] - a[1]);
-            sortedEq.forEach(([dim, count]) => {
+            const top3EQ = sortedEq.slice(0, 3);
+            top3EQ.forEach(([dim, count]) => {
                 const dimInfo = eqDimNames[dim];
                 const pct = Math.round((count / totalAnswers) * 100);
                 const el = document.createElement('div');
