@@ -478,7 +478,7 @@
                     class="font-display font-extrabold text-4xl bg-gradient-to-r from-love-purple via-love-rose to-love-pink bg-clip-text text-transparent mb-3">
                     Hati Meter</h1>
                 <!-- show version number -->
-                <p class="text-xs text-slate-400 mb-2">v1.1.0</p>
+                <p class="text-xs text-slate-400 mb-2">v1.2.0</p>
                 <p class="text-slate-500 text-sm md:text-base mb-2">💕 Ukur Hati Kamu Lewat 10 Pertanyaan!</p>
 
                 <div class="bg-white/40 rounded-2xl p-4 mb-6 border border-white/60 text-left">
@@ -513,8 +513,9 @@
                     </button>
                 </div>
                 -->
-
-                <p class="text-[10px] text-slate-400 leading-relaxed">⚠️ Ini hanya kuis hiburan, bukan tes psikologi
+               
+                <!-- make this color text more visible -->
+                <p class="text-[10px] text-slate-500 leading-relaxed">⚠️ Ini hanya kuis hiburan, bukan tes psikologi
                     profesional — hasil tidak menggantikan konsultasi ahli.</p>
             </div>
         </div>
@@ -889,6 +890,39 @@
         ];
 
         // ================================================
+        // EQ QUALITY POINTS PER OPTION (1-4)
+        // 1 = surface/reactive, 2 = decent, 3 = good maturity, 4 = excellent EQ
+        // Maps: questionIndex → [opt0_pts, opt1_pts, opt2_pts, opt3_pts]
+        // ================================================
+        const eqPointsMap = [
+            [2, 3, 4, 3], // Q0:  bad mood gebetan — listening+quality time = best
+            [2, 2, 3, 3], // Q1:  anniversary preferences — noticing detail/connection = better
+            [4, 3, 2, 3], // Q2:  berantem sahabat — cooling down first = best regulation
+            [2, 2, 1, 3], // Q3:  ngerasa dicintai — depth of connection matters
+            [4, 2, 1, 3], // Q4:  temen curhat toxic — validating without judging = best
+            [1, 4, 3, 3], // Q5:  di-ghosting — mature communication = best, avoidance = worst
+            [4, 2, 1, 3], // Q6:  pasangan lupa anniversary — calm communication = best, passive-aggressive = worst
+            [2, 3, 2, 2], // Q7:  cara nunjukin sayang — proactive help = slightly better
+            [4, 3, 1, 3], // Q8:  PDKT 'kamu beda' — grounded response = best, passive replay = worst
+            [2, 2, 2, 2], // Q9:  lagi sedih (preference) — all equal
+            [4, 3, 3, 3], // Q10: temen dapet promosi — genuine congrats + motivation = best
+            [2, 2, 2, 2], // Q11: LDR kangen (preference) — all equal
+            [4, 3, 2, 3], // Q12: meeting + pasangan chat — boundary setting + reassurance = best
+            [3, 2, 2, 4], // Q13: sahabat nangis putus — silent presence = deepest empathy
+            [4, 3, 1, 3], // Q14: beda pendapat liburan — open discussion = best, people-pleasing = worst
+            [4, 4, 2, 2], // Q15: dikritik bos — graceful acceptance or private approach = best
+            [3, 4, 3, 3], // Q16: style ngasih hadiah — noticing casual mentions = deep listening
+            [3, 3, 2, 2], // Q17: red flag terbesar — valuing communication/consistency = higher
+            [2, 3, 2, 2], // Q18: achieve something big — shared celebration > solo
+            [3, 2, 1, 3], // Q19: weekend ideal — depth > passive comfort
+            [4, 4, 2, 1], // Q20: insecure — self-reflection/vulnerable talk = best, dependency = worst
+            [3, 2, 3, 2], // Q21: momen bonding — deep conversation/reliability = better
+            [4, 3, 2, 2], // Q22: pasangan dingin — gentle proactive communication = best
+            [4, 3, 3, 4], // Q23: emotionally mature — communication + nuanced understanding = best
+            [4, 2, 3, 2], // Q24: sendiri di kota baru — proactive social joining = best
+        ];
+
+        // ================================================
         // LOVE LANGUAGE & EQ DATA
         // ================================================
         const loveLangInfo = {
@@ -961,64 +995,63 @@
         let autoPlayRunning = false;
 
         // Maps allQuestions index → option index for lowest EQ score
-        // Strategy: pick awareness when available, empathy as fallback,
-        //           then regulation, then social. Never motivation.
+        // Strategy: pick the option with the lowest eqPts value
         const lowScoreAnswers = [
-            0, // Q1:  empathy (forced - no awareness)
-            0, // Q2:  awareness ✓
-            0, // Q3:  regulation (forced - no awareness)
-            0, // Q4:  awareness ✓
-            0, // Q5:  empathy (fallback)
-            3, // Q6:  awareness ✓ (opt 4)
-            0, // Q7:  regulation (forced)
-            0, // Q8:  social (forced)
-            2, // Q9:  awareness ✓ (opt 3)
-            0, // Q10: awareness ✓
-            1, // Q11: awareness ✓ (opt 2)
-            0, // Q12: awareness ✓
-            0, // Q13: regulation (forced)
-            0, // Q14: empathy (forced)
-            2, // Q15: regulation (fallback)
-            3, // Q16: awareness ✓ (opt 4)
-            1, // Q17: empathy (fallback, opt 2)
-            0, // Q18: awareness ✓
-            0, // Q19: social (forced)
-            0, // Q20: awareness ✓
-            0, // Q21: awareness ✓
-            0, // Q22: empathy (forced)
-            1, // Q23: empathy (fallback, opt 2)
-            1, // Q24: awareness ✓ (opt 2)
-            0, // Q25: social (forced)
+            0, // Q0:  eqPts=2
+            0, // Q1:  eqPts=2
+            2, // Q2:  eqPts=2 (gifts/space = avoidant)
+            2, // Q3:  eqPts=1 (surface-level PDA)
+            2, // Q4:  eqPts=1 (distraction avoids processing)
+            0, // Q5:  eqPts=1 (avoidance/suppression)
+            2, // Q6:  eqPts=1 (passive-aggressive surprise)
+            0, // Q7:  eqPts=2
+            2, // Q8:  eqPts=1 (passive replay, no reciprocity)
+            0, // Q9:  eqPts=2 (all equal)
+            1, // Q10: eqPts=3 (min available)
+            0, // Q11: eqPts=2 (all equal)
+            2, // Q12: eqPts=2
+            1, // Q13: eqPts=2
+            2, // Q14: eqPts=1 (people-pleasing)
+            2, // Q15: eqPts=2
+            0, // Q16: eqPts=3 (min available)
+            2, // Q17: eqPts=2
+            0, // Q18: eqPts=2
+            2, // Q19: eqPts=1 (passive comfort)
+            3, // Q20: eqPts=1 (dependency)
+            1, // Q21: eqPts=2
+            2, // Q22: eqPts=2
+            1, // Q23: eqPts=3 (min available)
+            1, // Q24: eqPts=2
         ];
 
         // Maps allQuestions index → option index for highest EQ score
-        // Strategy: maximize diversity across all 5 EQ dimensions
+        // Strategy: pick the option with the highest eqPts value
         const highScoreAnswers = [
-            2, // Q1:  empathy (forced) — quality
-            1, // Q2:  awareness (forced) — acts
-            3, // Q3:  regulation (forced) — acts
-            3, // Q4:  awareness (forced) — quality
-            3, // Q5:  social — acts/social
-            2, // Q6:  motivation — acts/motivation
-            3, // Q7:  motivation — quality/motivation
-            1, // Q8:  social (forced) — acts
-            3, // Q9:  motivation — acts/motivation
-            2, // Q10: awareness (forced) — touch
-            3, // Q11: social — acts/social
-            1, // Q12: awareness (forced) — touch
-            2, // Q13: social — gifts/social
-            3, // Q14: empathy (forced) — quality
-            3, // Q15: motivation — gifts/motivation
-            1, // Q16: social — words/social
-            2, // Q17: motivation — acts/motivation
-            2, // Q18: awareness (forced) — quality
-            2, // Q19: motivation — gifts/motivation
-            1, // Q20: awareness (forced) — acts
-            1, // Q21: regulation — words/regulation
-            2, // Q22: empathy (forced) — acts
-            0, // Q23: regulation — words/regulation
-            2, // Q24: empathy — quality/empathy
-            2, // Q25: motivation — acts/motivation
+            2, // Q0:  eqPts=4 (active listening)
+            3, // Q1:  eqPts=3 (full quality time)
+            0, // Q2:  eqPts=4 (cooling down first)
+            3, // Q3:  eqPts=3 (values deep connection)
+            0, // Q4:  eqPts=4 (validating without judging)
+            1, // Q5:  eqPts=4 (mature communication)
+            0, // Q6:  eqPts=4 (calm communication)
+            1, // Q7:  eqPts=3 (proactive help)
+            0, // Q8:  eqPts=4 (grounded, not ge-er)
+            0, // Q9:  eqPts=2 (all equal)
+            0, // Q10: eqPts=4 (genuine congrats + motivation)
+            0, // Q11: eqPts=2 (all equal)
+            0, // Q12: eqPts=4 (boundary + reassurance)
+            3, // Q13: eqPts=4 (silent deep presence)
+            0, // Q14: eqPts=4 (open discussion)
+            0, // Q15: eqPts=4 (graceful acceptance)
+            1, // Q16: eqPts=4 (noticing casual mentions)
+            0, // Q17: eqPts=3 (values communication)
+            1, // Q18: eqPts=3 (shared celebration)
+            0, // Q19: eqPts=3 (values depth)
+            0, // Q20: eqPts=4 (self-reflection)
+            0, // Q21: eqPts=3 (deep conversation)
+            0, // Q22: eqPts=4 (gentle proactive approach)
+            0, // Q23: eqPts=4 (healthy communication)
+            0, // Q24: eqPts=4 (proactive social joining)
         ];
 
         // ================================================
@@ -1203,9 +1236,11 @@
                 answers.pop();
             }
 
-            // Record new answer
+            // Record new answer (include eqPts from the points map)
             currentSelectedIndex = index;
-            answers.push({ love: opt.love, eq: opt.eq });
+            const origIdx = selectedQuestionOriginalIndices[currentIndex];
+            const eqPts = eqPointsMap[origIdx][index];
+            answers.push({ love: opt.love, eq: opt.eq, eqPts: eqPts });
 
             // Update visual state — highlight selected, dim others, but keep all clickable
             const buttons = document.querySelectorAll('#options-container .option-btn');
@@ -1309,28 +1344,25 @@
             const dominantLove = sortedLoveEntries[0][0];
             const info = loveLangInfo[dominantLove];
 
-            // ---- IMPROVED EQ SCORE CALCULATION (v2 — Entropy-based) ----
-            // Uses Shannon entropy to measure diversity & balance of EQ dimensions.
-            // Concentrated answers (1-2 dims) → low score. Balanced (4-5 dims) → high score.
-            // This makes LOW scores genuinely achievable!
+            // ---- EQ SCORE CALCULATION (v3 — Quality-based) ----
+            // Each answer has an intrinsic eqPts (1-4) reflecting emotional intelligence.
+            // Primary score = average quality of answers. Secondary = dimension diversity bonus.
 
-            // Component 1 — Shannon Entropy (70% weight)
-            // Higher entropy = more diverse & balanced = higher EQ
-            const probs = Object.values(eqCounts)
-                .map(c => c / totalAnswers)
-                .filter(p => p > 0);
-            const maxEntropy = Math.log2(5); // ≈ 2.322 (perfectly balanced across 5 dims)
-            const entropy = -probs.reduce((sum, p) => sum + p * Math.log2(p), 0);
-            const entropyScore = (entropy / maxEntropy) * 100;
+            // Component 1 — Answer Quality Score (80% weight)
+            // Average of eqPts, normalized to 0-100 range
+            const totalEqPts = answers.reduce((sum, a) => sum + (a.eqPts || 2), 0);
+            const maxPts = totalAnswers * 4; // all perfect answers
+            const minPts = totalAnswers * 1; // all lowest answers
+            const qualityScore = ((totalEqPts - minPts) / (maxPts - minPts)) * 100;
 
-            // Component 2 — Dimension Diversity (30% weight)
-            // Non-linear: 1 dim=0, 2 dims=30, 3 dims=60, 4 dims=85, 5 dims=100
+            // Component 2 — Dimension Balance Bonus (20% weight)
+            // Mild bonus for having diverse EQ dimensions
             const activeDims = Object.values(eqCounts).filter(c => c > 0).length;
-            const diversityMap = [0, 0, 30, 60, 85, 100];
-            const diversityScore = diversityMap[activeDims] || 0;
+            const balanceBonusMap = [0, 10, 30, 55, 80, 100];
+            const balanceBonus = balanceBonusMap[activeDims] || 0;
 
             // Final EQ score — weighted combination
-            let eqScore = Math.round(entropyScore * 0.70 + diversityScore * 0.30);
+            let eqScore = Math.round(qualityScore * 0.80 + balanceBonus * 0.20);
             eqScore = Math.min(100, Math.max(5, eqScore));
 
             // Get EQ level
