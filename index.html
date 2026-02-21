@@ -497,25 +497,40 @@
                     </button>
                 </div>
 
-                <!-- DISABLED: Test Cheat Mode buttons (uncomment for testing)
+                <!-- Dev Mode Toggle -->
+                <div class="mt-2 mb-4">
+                    <button onclick="toggleDevLogin()"
+                        class="text-[10px] text-slate-300 hover:text-slate-400 transition-colors cursor-pointer mx-auto block">
+                        🔒 Dev Mode
+                    </button>
+                    <!-- Dev Login Prompt -->
+                    <div id="dev-login" class="hidden mt-2 bg-slate-50/80 border border-slate-200 rounded-xl p-3 text-center space-y-2">
+                        <p class="text-[11px] text-slate-400">Masukkan password untuk Dev Mode:</p>
+                        <input id="dev-password" type="password" placeholder="Password..."
+                            class="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 text-slate-700"
+                            onkeydown="if(event.key==='Enter') checkDevPassword()">
+                        <button onclick="checkDevPassword()"
+                            class="w-full py-2 bg-slate-200 hover:bg-slate-300 text-slate-600 font-semibold text-xs rounded-lg transition-colors">
+                            Masuk
+                        </button>
+                        <p id="dev-error" class="hidden text-[10px] text-red-400">❌ Password salah!</p>
+                    </div>
+                    <!-- Dev Mode Buttons (shown after auth) -->
+                    <div id="dev-buttons" class="hidden mt-2 space-y-2">
+                        <p class="text-[10px] text-emerald-500 font-semibold text-center">✅ Dev Mode Active</p>
+                        <button onclick="startQuiz(10, 'low')"
+                            class="menu-btn w-full py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-yellow-900 font-bold text-sm rounded-2xl shadow-md flex items-center justify-center gap-2 hover:shadow-lg">
+                            <span>🔧</span>
+                            <span>Test: Skor Rendah</span>
+                        </button>
+                        <button onclick="startQuiz(10, 'high')"
+                            class="menu-btn w-full py-3 bg-gradient-to-r from-emerald-400 to-teal-500 text-emerald-900 font-bold text-sm rounded-2xl shadow-md flex items-center justify-center gap-2 hover:shadow-lg">
+                            <span>🧪</span>
+                            <span>Test: Skor Tinggi</span>
+                        </button>
+                    </div>
+                </div>
 
-                <div class="mb-2">
-                    <button onclick="startQuiz(10, 'low')"
-                        class="menu-btn w-full py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-yellow-900 font-bold text-sm rounded-2xl shadow-md flex items-center justify-center gap-2 hover:shadow-lg">
-                        <span>🔧</span>
-                        <span>Test: Skor Rendah (Cheat Mode)</span>
-                    </button>
-                </div>
-                <div class="mb-5">
-                    <button onclick="startQuiz(10, 'high')"
-                        class="menu-btn w-full py-3 bg-gradient-to-r from-emerald-400 to-teal-500 text-emerald-900 font-bold text-sm rounded-2xl shadow-md flex items-center justify-center gap-2 hover:shadow-lg">
-                        <span>🧪</span>
-                        <span>Test: Skor Tinggi (Cheat Mode)</span>
-                    </button>
-                </div>
-                -->
-               
-               
                 <!-- make this color text more visible -->
                 <p class="text-[10px] text-slate-500 leading-relaxed">⚠️ Ini hanya kuis hiburan, bukan tes psikologi
                     profesional — hasil tidak menggantikan konsultasi ahli.</p>
@@ -635,12 +650,13 @@
                         <p class="text-xs font-semibold text-amber-700 mb-2">📋 Level EQ</p>
                         <div id="eq-levels-ref" class="space-y-1.5"></div>
                     </div>
-                </div>
 
-                <!-- Insight -->
-                <div class="bg-white/40 rounded-2xl p-4 mb-4 border border-white/60">
-                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">✨ Insight Personal</p>
-                    <p id="insight-text" class="text-sm text-slate-600 leading-relaxed"></p>
+                    <!-- Personal Insight (based on Love Language + EQ) -->
+                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-3 mt-3 text-left border border-purple-100/60">
+                        <p class="text-xs font-semibold text-purple-700 mb-1">✨ Insight Personal Kamu</p>
+                        <p class="text-[10px] text-purple-400 mb-2 italic">Insight ini unik untuk setiap orang — berdasarkan kombinasi Love Language & level EQ kamu.</p>
+                        <p id="insight-text" class="text-xs text-slate-600 leading-relaxed"></p>
+                    </div>
                 </div>
 
                 <!-- EQ Disclaimer -->
@@ -994,6 +1010,43 @@
         let selectedQuestions = [];
         let answers = []; // { love, eq }
         let usedIndexes = []; // track used question indexes across plays
+
+        // ================================================
+        // DEV MODE (password-protected testing)
+        // ================================================
+        const DEV_PASSWORD = 'claude42';
+        let devUnlocked = false;
+
+        function toggleDevLogin() {
+            const login = document.getElementById('dev-login');
+            const buttons = document.getElementById('dev-buttons');
+            if (devUnlocked) {
+                // Already unlocked — just toggle buttons visibility
+                buttons.classList.toggle('hidden');
+                return;
+            }
+            login.classList.toggle('hidden');
+            if (!login.classList.contains('hidden')) {
+                document.getElementById('dev-password').focus();
+            }
+        }
+
+        function checkDevPassword() {
+            const input = document.getElementById('dev-password');
+            const error = document.getElementById('dev-error');
+            if (input.value === DEV_PASSWORD) {
+                devUnlocked = true;
+                document.getElementById('dev-login').classList.add('hidden');
+                document.getElementById('dev-buttons').classList.remove('hidden');
+                error.classList.add('hidden');
+                input.value = '';
+            } else {
+                error.classList.remove('hidden');
+                input.value = '';
+                input.focus();
+                setTimeout(() => error.classList.add('hidden'), 2000);
+            }
+        }
 
         // ================================================
         // CHEAT MODE (testing) — Low Score Path
