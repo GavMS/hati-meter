@@ -381,12 +381,20 @@
                         dan hubungan.</p>
                 </div>
 
-                <div class="mb-5">
+                <div class="mb-3">
                     <button onclick="startQuiz(10)"
                         class="menu-btn w-full py-5 bg-gradient-to-r from-love-pink via-love-rose to-love-purple text-white font-bold text-lg rounded-2xl shadow-lg flex items-center justify-center gap-3 animate-pulse-glow">
                         <span class="text-2xl">🔮</span>
                         <span>Mulai Main</span>
                         <span class="text-2xl">→</span>
+                    </button>
+                </div>
+
+                <div class="mb-5">
+                    <button onclick="startQuiz(10, true)"
+                        class="menu-btn w-full py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-yellow-900 font-bold text-sm rounded-2xl shadow-md flex items-center justify-center gap-2 hover:shadow-lg">
+                        <span>🔧</span>
+                        <span>Test: Skor Rendah (Cheat Mode)</span>
                     </button>
                 </div>
 
@@ -415,6 +423,21 @@
                     <span id="progress-label" class="text-xs font-semibold text-love-purple">1 / 5</span>
                 </div>
             </header>
+
+            <!-- Cheat Mode Banner -->
+            <div id="cheat-banner" class="hidden bg-yellow-100 border border-yellow-300 rounded-2xl px-4 py-2 mb-4 flex items-center justify-between gap-2">
+                <span class="text-xs font-bold text-yellow-700 whitespace-nowrap">🔧 CHEAT MODE</span>
+                <div class="flex gap-2">
+                    <button onclick="autoAnswer()"
+                        class="text-[11px] bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold px-3 py-1 rounded-full transition-colors whitespace-nowrap">
+                        ⚡ Auto 1
+                    </button>
+                    <button id="auto-all-btn" onclick="autoPlayAll()"
+                        class="text-[11px] bg-red-500 hover:bg-red-600 text-white font-bold px-3 py-1 rounded-full transition-colors whitespace-nowrap">
+                        ⚡⚡ Skip All
+                    </button>
+                </div>
+            </div>
 
             <!-- Progress Bar -->
             <div class="w-full h-2 bg-white/50 rounded-full mb-6 overflow-hidden">
@@ -815,6 +838,44 @@
         let usedIndexes = []; // track used question indexes across plays
 
         // ================================================
+        // CHEAT MODE (testing) — Low Score Path
+        // ================================================
+        let cheatMode = false;
+        let selectedQuestionOriginalIndices = [];
+        let autoPlayRunning = false;
+
+        // Maps allQuestions index → option index for lowest EQ score
+        // Strategy: pick awareness when available, empathy as fallback,
+        //           then regulation, then social. Never motivation.
+        const lowScoreAnswers = [
+            0, // Q1:  empathy (forced - no awareness)
+            0, // Q2:  awareness ✓
+            0, // Q3:  regulation (forced - no awareness)
+            0, // Q4:  awareness ✓
+            0, // Q5:  empathy (fallback)
+            3, // Q6:  awareness ✓ (opt 4)
+            0, // Q7:  regulation (forced)
+            0, // Q8:  social (forced)
+            2, // Q9:  awareness ✓ (opt 3)
+            0, // Q10: awareness ✓
+            1, // Q11: awareness ✓ (opt 2)
+            0, // Q12: awareness ✓
+            0, // Q13: regulation (forced)
+            0, // Q14: empathy (forced)
+            2, // Q15: regulation (fallback)
+            3, // Q16: awareness ✓ (opt 4)
+            1, // Q17: empathy (fallback, opt 2)
+            0, // Q18: awareness ✓
+            0, // Q19: social (forced)
+            0, // Q20: awareness ✓
+            0, // Q21: awareness ✓
+            0, // Q22: empathy (forced)
+            1, // Q23: empathy (fallback, opt 2)
+            1, // Q24: awareness ✓ (opt 2)
+            0, // Q25: social (forced)
+        ];
+
+        // ================================================
         // FISHER-YATES SHUFFLE (unbiased)
         // ================================================
         function fisherYatesShuffle(arr) {
@@ -841,7 +902,8 @@
         // ================================================
         // START QUIZ
         // ================================================
-        function startQuiz(n) {
+        function startQuiz(n, isCheat = false) {
+            cheatMode = isCheat;
             totalQuestions = n;
             currentIndex = 0;
             answers = [];
@@ -863,10 +925,14 @@
             // Mark as used
             usedIndexes.push(...pickedIndexes);
 
-            // Build selected questions array
+            // Build selected questions array & store original indices
             selectedQuestions = pickedIndexes.map(i => allQuestions[i]);
+            selectedQuestionOriginalIndices = pickedIndexes;
 
             showScreen('quiz-screen');
+            // Show/hide cheat banner
+            const banner = document.getElementById('cheat-banner');
+            if (banner) banner.classList.toggle('hidden', !cheatMode);
             loadQuestion();
         }
 
@@ -900,13 +966,18 @@
 
             // Build options
             optionsContainer.innerHTML = '';
+            const origIdx = selectedQuestionOriginalIndices[currentIndex];
+            const cheatAnswer = cheatMode ? lowScoreAnswers[origIdx] : -1;
+
             q.opts.forEach((opt, i) => {
                 const btn = document.createElement('button');
-                btn.className = `option-btn w-full p-4 rounded-2xl bg-white border-2 border-slate-100 text-left flex items-center gap-4 group opacity-0`;
+                const isCheatTarget = (i === cheatAnswer);
+                btn.className = `option-btn w-full p-4 rounded-2xl bg-white border-2 ${isCheatTarget ? 'border-yellow-300 bg-yellow-50/50' : 'border-slate-100'} text-left flex items-center gap-4 group opacity-0`;
                 btn.style.animation = `slideUp 0.4s ease-out ${0.1 + i * 0.08}s forwards`;
                 btn.innerHTML = `
-                <span class="icon-circle flex-shrink-0 w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-xl group-hover:bg-love-pink/10 transition-colors">${opt.emoji}</span>
-                <span class="text-sm font-medium text-slate-600">${opt.text}</span>
+                <span class="icon-circle flex-shrink-0 w-10 h-10 rounded-xl ${isCheatTarget ? 'bg-yellow-100' : 'bg-slate-50'} flex items-center justify-center text-xl group-hover:bg-love-pink/10 transition-colors">${opt.emoji}</span>
+                <span class="text-sm font-medium text-slate-600 flex-1">${opt.text}</span>
+                ${isCheatTarget ? '<span class="flex-shrink-0 text-[10px] bg-yellow-400 text-yellow-900 px-2 py-0.5 rounded-full font-bold">⭐ LOW</span>' : ''}
             `;
                 btn.onclick = () => handleAnswer(i, btn);
                 optionsContainer.appendChild(btn);
@@ -970,6 +1041,38 @@
         };
 
         // ================================================
+        // CHEAT: AUTO-ANSWER FUNCTIONS
+        // ================================================
+        function autoAnswer() {
+            if (currentIndex >= totalQuestions) return;
+            const origIdx = selectedQuestionOriginalIndices[currentIndex];
+            const targetOpt = lowScoreAnswers[origIdx];
+            const buttons = document.querySelectorAll('#options-container .option-btn');
+            if (buttons[targetOpt]) {
+                buttons[targetOpt].click();
+            }
+        }
+
+        async function autoPlayAll() {
+            if (autoPlayRunning) return;
+            autoPlayRunning = true;
+            const autoBtn = document.getElementById('auto-all-btn');
+            if (autoBtn) autoBtn.textContent = '⏳ Running...';
+            while (currentIndex < totalQuestions) {
+                const origIdx = selectedQuestionOriginalIndices[currentIndex];
+                const targetOpt = lowScoreAnswers[origIdx];
+                await new Promise(r => setTimeout(r, 200));
+                const buttons = document.querySelectorAll('#options-container .option-btn');
+                if (buttons[targetOpt]) buttons[targetOpt].click();
+                await new Promise(r => setTimeout(r, 300));
+                document.getElementById('next-btn').click();
+                await new Promise(r => setTimeout(r, 200));
+            }
+            autoPlayRunning = false;
+            if (autoBtn) autoBtn.textContent = '⚡⚡ Skip All';
+        }
+
+        // ================================================
         // CALCULATE & SHOW RESULTS
         // ================================================
         function showResults() {
@@ -995,37 +1098,29 @@
             const dominantLove = sortedLoveEntries[0][0];
             const info = loveLangInfo[dominantLove];
 
-            // ---- IMPROVED EQ SCORE CALCULATION ----
-            // Three-component model: Strength + Diversity + Balance (no random noise)
-            const eqDimWeights = { awareness: 0.20, empathy: 0.25, regulation: 0.25, social: 0.15, motivation: 0.15 };
+            // ---- IMPROVED EQ SCORE CALCULATION (v2 — Entropy-based) ----
+            // Uses Shannon entropy to measure diversity & balance of EQ dimensions.
+            // Concentrated answers (1-2 dims) → low score. Balanced (4-5 dims) → high score.
+            // This makes LOW scores genuinely achievable!
 
-            // Component 1 — Dimension Strength (35%)
-            // Measures how much of your answers align with high-importance EQ dimensions
-            let strengthSum = 0;
-            Object.entries(eqCounts).forEach(([dim, count]) => {
-                strengthSum += (count / totalAnswers) * eqDimWeights[dim];
-            });
-            // strengthSum ∈ [0.15, 0.25], normalize to [30, 100]
-            const strengthScore = 30 + ((strengthSum - 0.15) / 0.10) * 70;
+            // Component 1 — Shannon Entropy (70% weight)
+            // Higher entropy = more diverse & balanced = higher EQ
+            const probs = Object.values(eqCounts)
+                .map(c => c / totalAnswers)
+                .filter(p => p > 0);
+            const maxEntropy = Math.log2(5); // ≈ 2.322 (perfectly balanced across 5 dims)
+            const entropy = -probs.reduce((sum, p) => sum + p * Math.log2(p), 0);
+            const entropyScore = (entropy / maxEntropy) * 100;
 
-            // Component 2 — Diversity (35%)
-            // More diverse EQ dimensions = broader emotional intelligence
+            // Component 2 — Dimension Diversity (30% weight)
+            // Non-linear: 1 dim=0, 2 dims=30, 3 dims=60, 4 dims=85, 5 dims=100
             const activeDims = Object.values(eqCounts).filter(c => c > 0).length;
-            const diversityScore = (activeDims / 5) * 100;
-
-            // Component 3 — Balance (30%)
-            // Evenly distributed dimensions = well-rounded EQ
-            const expected = totalAnswers / 5;
-            let variance = 0;
-            Object.values(eqCounts).forEach(count => {
-                variance += Math.pow(count - expected, 2);
-            });
-            const maxVariance = Math.pow(totalAnswers - expected, 2) + 4 * Math.pow(expected, 2);
-            const balanceScore = (1 - variance / maxVariance) * 100;
+            const diversityMap = [0, 0, 30, 60, 85, 100];
+            const diversityScore = diversityMap[activeDims] || 0;
 
             // Final EQ score — weighted combination
-            let eqScore = Math.round(strengthScore * 0.35 + diversityScore * 0.35 + balanceScore * 0.30);
-            eqScore = Math.min(100, Math.max(10, eqScore));
+            let eqScore = Math.round(entropyScore * 0.70 + diversityScore * 0.30);
+            eqScore = Math.min(100, Math.max(5, eqScore));
 
             // Get EQ level
             const eqLevel = eqLevels.find(l => eqScore >= l.min && eqScore <= l.max);
@@ -1131,7 +1226,11 @@
         function resetQuiz() {
             currentIndex = 0;
             answers = [];
+            cheatMode = false;
+            autoPlayRunning = false;
             document.getElementById('eq-bar').style.width = '0%';
+            const banner = document.getElementById('cheat-banner');
+            if (banner) banner.classList.add('hidden');
             showScreen('start-screen');
         }
     </script>
