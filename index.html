@@ -1835,6 +1835,13 @@
                 setTimeout(() => h.remove(), 9000);
             }, 1000);
         })();
+
+        // ================================================
+        // INIT — check for saved progress on page load
+        // ================================================
+        (function init() {
+            checkForSavedProgress();
+        })();
     </script>
 </body>
 
